@@ -1,0 +1,47 @@
+{
+  "plants": [
+    {
+      "id": "1",
+      "name": "Aloe Vera",
+      "image": "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 15.99
+    },
+    {
+      "id": "2",
+      "name": "Snake Plant",
+      "image": "https://images.unsplash.com/photo-1593482892290-f54927ae1b79?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 25.5
+    },
+    {
+      "id": "3",
+      "name": "Monstera Deliciosa",
+      "image": "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 45
+    },
+    {
+      "id": "4",
+      "name": "Pothos",
+      "image": "https://images.unsplash.com/photo-1596245155989-86640ca85e1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 12.75
+    },
+    {
+      "id": "5",
+      "name": "Fiddle Leaf Fig",
+      "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 55
+    },
+    {
+      "name": "Money Tree",
+      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 35,
+      "id": "6z6vyHyOM2U"
+    },
+    {
+      "name": "Money Tree",
+      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "price": 35,
+      "id": "QZWss1uHOb0"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
