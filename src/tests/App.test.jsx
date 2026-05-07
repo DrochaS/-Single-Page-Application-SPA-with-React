@@ -1,67 +1,70 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 import App from '../App'
 
+// Mock fetch
+global.fetch = vi.fn()
+
 describe('App Integration Tests', () => {
-  test('renders app with all components', () => {
-    render(<App />)
-    
-    expect(screen.getByText('Personal Project Showcase App')).toBeInTheDocument()
-    expect(screen.getByText('Add Project')).toBeInTheDocument()
-    expect(screen.getByText('Search Projects')).toBeInTheDocument()
-    expect(screen.getByTestId('empty-state')).toBeInTheDocument()
+  const mockPlants = [
+    { id: '1', name: 'Aloe', image: 'aloe.jpg', price: 10 },
+    { id: '2', name: 'Snake', image: 'snake.jpg', price: 20 }
+  ]
+
+  beforeEach(() => {
+    fetch.mockReset()
   })
 
-  test('adds a new project successfully', async () => {
-    const user = userEvent.setup()
+  test('fetches and displays plants on load', async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockPlants)
+    })
+
     render(<App />)
-    
-    // Add a project
-    await user.type(screen.getByTestId('project-title-input'), 'My New Project')
-    await user.type(screen.getByTestId('project-description-input'), 'This is a test project')
-    await user.click(screen.getByTestId('add-project-button'))
-    
-    // Verify project appears
-    expect(screen.getByText('My New Project')).toBeInTheDocument()
-    expect(screen.getByText('This is a test project')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText('Aloe')).toBeInTheDocument()
+      expect(screen.getByText('Snake')).toBeInTheDocument()
+    })
   })
 
-  test('filters projects based on search', async () => {
-    const user = userEvent.setup()
+  test('filters plants by name', async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockPlants)
+    })
+
     render(<App />)
-    
-    // Add two projects
-    await user.type(screen.getByTestId('project-title-input'), 'React Project')
-    await user.type(screen.getByTestId('project-description-input'), 'Building with React')
-    await user.click(screen.getByTestId('add-project-button'))
-    
-    await user.type(screen.getByTestId('project-title-input'), 'Vue Project')
-    await user.type(screen.getByTestId('project-description-input'), 'Building with Vue')
-    await user.click(screen.getByTestId('add-project-button'))
-    
-    // Search for React
-    const searchInput = screen.getByTestId('search-input')
-    await user.type(searchInput, 'React')
-    
-    expect(screen.getByText('React Project')).toBeInTheDocument()
-    expect(screen.queryByText('Vue Project')).not.toBeInTheDocument()
+
+    await waitFor(() => screen.getByText('Aloe'))
+
+    const searchInput = screen.getByPlaceholderText('Type a name to search...')
+    fireEvent.change(searchInput, { target: { value: 'Aloe' } })
+
+    expect(screen.getByText('Aloe')).toBeInTheDocument()
+    expect(screen.queryByText('Snake')).not.toBeInTheDocument()
   })
 
-  test('deletes a project', async () => {
-    const user = userEvent.setup()
+  test('adds a new plant', async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockPlants)
+    })
+
     render(<App />)
-    
-    // Add a project
-    await user.type(screen.getByTestId('project-title-input'), 'Project to Delete')
-    await user.type(screen.getByTestId('project-description-input'), 'Will be deleted')
-    await user.click(screen.getByTestId('add-project-button'))
-    
-    expect(screen.getByText('Project to Delete')).toBeInTheDocument()
-    
-    // Delete the project
-    const deleteButton = screen.getByTestId(/delete-project-/)
-    await user.click(deleteButton)
-    
-    expect(screen.queryByText('Project to Delete')).not.toBeInTheDocument()
+
+    await waitFor(() => screen.getByText('Aloe'))
+
+    const newPlant = { id: '3', name: 'Pothos', image: 'pothos.jpg', price: 15 }
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(newPlant)
+    })
+
+    fireEvent.change(screen.getByPlaceholderText('Plant name'), { target: { value: 'Pothos' } })
+    fireEvent.change(screen.getByPlaceholderText('Image URL'), { target: { value: 'pothos.jpg' } })
+    fireEvent.change(screen.getByPlaceholderText('Price'), { target: { value: '15' } })
+    fireEvent.click(screen.getByText('Add Plant'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Pothos')).toBeInTheDocument()
+    })
   })
 })
